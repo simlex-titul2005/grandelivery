@@ -6,13 +6,7 @@ namespace grandelivery.WebUI
 {
     public class MvcApplication : SxMvcApplication
     {
-        public static string[] CustomRoles
-        {
-            get
-            {
-                return new string[] { "customer", "carrier" };
-            }
-        }
+        public static string AppName { get { return "grandelivery"; } }
 
         protected override void Application_Start(object sender, EventArgs e)
         {

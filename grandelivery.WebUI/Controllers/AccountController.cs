@@ -19,8 +19,7 @@ namespace grandelivery.WebUI.Controllers
         public sealed override async Task<ActionResult> Register(SxVMRegister model)
         {
             var result = await base.Register(model);
-            var res = result as ViewResult;
-            if (res != null)
+            if(!ModelState.IsValid)
             {
                 var viewModel = Mapper.Map<SxVMRegister, VMRegister>(model);
                 return View(viewModel);

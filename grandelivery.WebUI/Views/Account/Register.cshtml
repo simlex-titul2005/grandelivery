@@ -27,6 +27,8 @@
 
         @Html.AntiForgeryToken()
 
+        @Html.ValidationSummary()
+
         <div class="form-group">
             @Html.EditorFor(x => x.NikName, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.NikName) } })
             @Html.ValidationMessageFor(x => x.NikName)
