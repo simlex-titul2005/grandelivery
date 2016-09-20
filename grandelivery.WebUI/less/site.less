@@ -1,0 +1,107 @@
+﻿@import 'https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=cyrillic';
+@import (reference) "colors.less";
+@import (reference) "../bower_components/bootstrap/less/variables.less";
+
+@def-pad:15px;
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+@footer-h:60px;
+@footer-pad: @def-pad;
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: @footer-h + @footer-pad*2;
+    background-image: url('/content/dist/static/bg.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-size: 13px;
+    font-family: 'PT Sans Narrow', sans-serif;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: @footer-h + @footer-pad*2;
+    background-color: #222;
+    border-color: #080808;
+    color:@color-white;
+    padding:@def-pad*2 0;
+    border-top: 1px solid #474747;
+    background-image: linear-gradient(to top,#3c3c3c 0,#222 100%);
+    @media (max-width: @screen-xs-max) {
+        height:auto;
+    }
+
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        
+    }
+
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        
+    }
+
+    @media (min-width: @screen-lg-min) {
+        
+    }
+}
+
+//bootstrap extantions
+
+
+//footer
+
+.footer__right{
+    @media (max-width: @screen-xs-max) {
+        margin-top:@def-pad*2;
+    }
+
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        text-align:right;
+    }
+
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        text-align:right;
+    }
+
+    @media (min-width: @screen-lg-min) {
+        text-align:right;
+    }
+}
+
+//auth-page
+.auth-page{
+    color:@color-white;
+    width:400px;
+    max-width:100%;
+    margin:0 auto;
+    margin-top:@def-pad*6;
+    @media (max-width: @screen-xs-max) {
+        margin-top:0;
+    }
+
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        
+    }
+
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        
+    }
+
+    @media (min-width: @screen-lg-min) {
+        
+    }
+}
+
+.auth-page__form .control-label{
+    font-weight:normal;
+}
+
+.auth-page__full-btn{
+    width:100%;
+}
