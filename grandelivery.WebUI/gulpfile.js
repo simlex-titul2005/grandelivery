@@ -76,13 +76,13 @@ function createCss() {
     //    }))
     //    .pipe(gulp.dest('content/dist/css'));
 
-    ////by one css
-    //gulp.src([
-    //   'bower_components/lightbox2/dist/css/lightbox.min.css',
-    //   'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-    //   'bower_components/morris.js/morris.css'
-    //])
-    //    .pipe(gulp.dest('content/dist/css'));
+    //by one css
+    gulp.src([
+       //'bower_components/lightbox2/dist/css/lightbox.min.css',
+       'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css'
+       //'bower_components/morris.js/morris.css'
+    ])
+        .pipe(gulp.dest('content/dist/css'));
 }
 //function createCss_admin()
 //{
@@ -166,10 +166,10 @@ function createJs() {
     gulp.src([
         'bower_components/jquery-validation/dist/jquery.validate.min.js',
         'bower_components/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js',
-        'bower_components/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js'
+        'bower_components/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js',
         //'bower_components/lightbox2/dist/js/lightbox.min.js',
-        //'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-        //'bower_components/moment/min/moment-with-locales.min.js',
+        'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+        'bower_components/moment/min/moment-with-locales.min.js'
         //'bower_components/signalr/jquery.signalR.min.js',
         //'bower_components/raphael/raphael.min.js',
         //'bower_components/morris.js/morris.min.js'

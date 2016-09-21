@@ -3,12 +3,14 @@
 @Html.SxGridView(Model, new SxExtantions.SxGridViewSettings<VMOrder> {
     Columns=new SxExtantions.SxGridViewColumn<VMOrder>[] {
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Дата заявки", FieldName="DateCreate"},
-        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Статус", FieldName="DateCreate"},
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Пункт отправки", FieldName="DestinationFrom"},
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Пункт назначения", FieldName="DestinationTo"},
-        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Груз", FieldName="Id"}
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Груз", FieldName="CargoName"}
     },
     DataAjaxUrl=Url.Action("List", "Orders"),
     EnableCreating=true,
-    CreateRowUrl = Url.Action("Edit", "Orders")
+    CreateRowUrl = Url.Action("Edit", "Orders"),
+    EnableEditing=true,
+    EditRowUrl = x => { return Url.Action("Edit", "Orders", new { orderId=x.Id }); },
+    ShowPagerInfo=true
 })

@@ -22,11 +22,11 @@ namespace grandelivery.WebUI.ViewModels
         public string DestinationTo { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
-        [Display(Name = "Начальная дата")]
+        [Display(Name = "Начальная дата"), UIHint("_EditDate")]
         public DateTime TakeDateBegin { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
-        [Display(Name = "Конечная дата")]
+        [Display(Name = "Конечная дата"), UIHint("_EditDate")]
         public DateTime TakeDateEnd { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
@@ -34,16 +34,24 @@ namespace grandelivery.WebUI.ViewModels
         [Display(Name = "Наименование груза")]
         public string CargoName { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
         [Display(Name = "Вес груза, кг")]
-        public decimal CargoWeight { get; set; }
+        [Range(typeof(decimal), "0,00", "1000000", ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "ValidDecimalFild")]
+        public decimal? CargoWeight { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
+        [Range(typeof(decimal), "0,00", "1000000", ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "ValidDecimalFild")]
         [Display(Name = "Ширина груза, м")]
-        public decimal CargoWidth { get; set; }
+        public decimal? CargoWidth { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
+        [Range(typeof(decimal), "0,00", "1000000", ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "ValidDecimalFild")]
         [Display(Name = "Высота груза, м")]
-        public decimal CargoHeight { get; set; }
+        public decimal? CargoHeight { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "RequiredField")]
+        [Range(typeof(decimal), "0,00", "1000000", ErrorMessageResourceType = typeof(SX.WebCore.Resources.Messages), ErrorMessageResourceName = "ValidDecimalFild")]
         [Display(Name = "Длина груза, м")]
-        public decimal CargoLength { get; set; }
+        public decimal? CargoLength { get; set; }
     }
 }

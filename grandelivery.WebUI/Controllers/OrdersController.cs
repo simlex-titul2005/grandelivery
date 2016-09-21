@@ -1,7 +1,9 @@
 ﻿using grandelivery.WebUI.Infrastructure.Repositories;
 using grandelivery.WebUI.Models;
 using grandelivery.WebUI.ViewModels;
+using Microsoft.AspNet.Identity;
 using SX.WebCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -24,7 +26,8 @@ namespace grandelivery.WebUI.Controllers
         public ActionResult List(int page = 1)
         {
             var role = GetUserRole();
-            var filter = new SxFilter(page, _pageSize) { AddintionalInfo = new object[] { role } };
+            var order = new SxOrder() { FieldName = "DateCreate", Direction = SortDirection.Desc };
+            var filter = new SxFilter(page, _pageSize) { Order=order, AddintionalInfo = new object[] { role } };
             var viewModel = Repo.Read(filter);
 
             if (page > 1 && !viewModel.Any())
@@ -56,12 +59,44 @@ namespace grandelivery.WebUI.Controllers
             var userRole = GetUserRole();
             if (!Equals(userRole, "customer")) return new HttpNotFoundResult();
 
-            var data = orderId.HasValue ? Repo.GetByKey(orderId) : new Order();
+            var date = DateTime.Now;
+            var data = orderId.HasValue ? Repo.GetByKey(orderId) : new Order() {
+                TakeDateBegin = date.AddHours(1),
+                TakeDateEnd=date.AddDays(1),
+            };
+
             if (orderId.HasValue && data == null) return new HttpNotFoundResult();
 
             var viewModel = Mapper.Map<Order, VMOrder>(data);
+            if (!orderId.HasValue)
+            {
+                viewModel.CargoHeight = null;
+                viewModel.CargoLength = null;
+                viewModel.CargoWeight = null;
+                viewModel.CargoWidth = null;
+            }
 
             return View(viewModel);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Edit(VMOrder model)
+        {
+            if(ModelState.IsValid)
+            {
+                var isNew = model.Id == 0;
+                var redactModel = Mapper.Map<VMOrder, Order>(model);
+                redactModel.UserId = User.Identity.GetUserId();
+
+                if (isNew)
+                    Repo.Create(redactModel);
+                else
+                    Repo.Update(redactModel);
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(model);
         }
     }
 }

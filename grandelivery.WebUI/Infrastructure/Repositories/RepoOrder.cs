@@ -13,7 +13,28 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
 {
     public sealed class RepoOrder : SxDbRepository<int, Order, VMOrder>
     {
-        public override VMOrder[] Read(SxFilter filter)
+        public sealed override Order Create(Order model)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                var data = connection.Query<Order>("dbo.add_order @df, @dt, @tdb, @tde, @uid, @cName, @cWeight, @cWidth, @cHeight, @cLength", new {
+                    df=model.DestinationFrom,
+                    dt=model.DestinationTo,
+                    tdb=model.TakeDateBegin,
+                    tde=model.TakeDateEnd,
+                    uid=model.UserId,
+                    cName=model.CargoName,
+                    cWeight=model.CargoWeight,
+                    cWidth=model.CargoWidth,
+                    cHeight=model.CargoHeight,
+                    cLength=model.CargoLength
+                });
+
+                return data.SingleOrDefault();
+            }
+        }
+
+        public sealed override VMOrder[] Read(SxFilter filter)
         {
             var sb = new StringBuilder();
             sb.Append(SxQueryProvider.GetSelectString());
@@ -54,6 +75,28 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
             //};
 
             return query.ToString();
+        }
+
+        public sealed override Order Update(Order model)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                var data = connection.Query<Order>("dbo.update_order @id, @df, @dt, @tdb, @tde, @cName, @cWeight, @cWidth, @cHeight, @cLength", new
+                {
+                    id=model.Id,
+                    df = model.DestinationFrom,
+                    dt = model.DestinationTo,
+                    tdb = model.TakeDateBegin,
+                    tde = model.TakeDateEnd,
+                    cName = model.CargoName,
+                    cWeight = model.CargoWeight,
+                    cWidth = model.CargoWidth,
+                    cHeight = model.CargoHeight,
+                    cLength = model.CargoLength
+                });
+
+                return data.SingleOrDefault();
+            }
         }
     }
 }
