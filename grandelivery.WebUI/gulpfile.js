@@ -30,7 +30,8 @@ function clear() {
 //create css files
 function createCss() {
     var lessStream = gulp.src([
-       'less/site.less'
+       'less/site.less',
+       'less/sx-gv.less'
     ])
         .pipe(less())
         .pipe(cleanCSS({ compatibility: 'ie8' }))
@@ -147,7 +148,8 @@ function createJs() {
         .pipe(concat('js.js'));
 
     var sitejs = gulp.src([
-        'scripts/site.js'
+        'scripts/site.js',
+        'scripts/sx-gv.js'
     ])
         .pipe(uglify())
         .pipe(concat('sitejs.js'));

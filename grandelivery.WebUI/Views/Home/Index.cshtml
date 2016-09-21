@@ -1,2 +1,14 @@
-﻿<h2>Добро пожаловать , @User.Identity.Name !</h2>
-<p>Вы вошли как @(User.IsInRole("admin") ? "админиcтратор" : User.IsInRole("customer") ? "заказчик" : User.IsInRole("carrier") ? "перевозчик" : " [роль не определена или не поддерживается]")</p>
+﻿@if(User.IsInRole("customer"))
+{
+    <h3>Ваши заказы</h3>
+}
+
+@Html.Action("List", "Orders")
+
+@section scripts{
+    <script>
+        $(function () {
+            $('#grid-orders').sx_gv();
+        });
+    </script>
+}

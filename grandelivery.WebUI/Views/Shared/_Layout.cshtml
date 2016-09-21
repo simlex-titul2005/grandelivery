@@ -13,11 +13,18 @@
 <body>
     @Html.Partial("_NavBar")
     <div class="container">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <h2>Добро пожаловать , @User.Identity.Name !</h2>
+        }
         @RenderBody()
     </div>
     @Html.Partial("_Footer")
 
     <script src="~/content/dist/js/site.min.js"></script>
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+    </script>
     @RenderSection("scripts", false)
 </body>
 </html>

@@ -1,4 +1,9 @@
-﻿<nav class="navbar navbar-inverse">
+﻿@{ 
+    var routeDataValues = Request.RequestContext.RouteData.Values;
+    var controller = routeDataValues["controller"].ToString().ToLower();
+    var action = routeDataValues["action"].ToString().ToLower();
+}
+<nav class="navbar navbar-inverse">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -8,36 +13,24 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">@MvcApplication.AppName</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Link</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                @if (User.Identity.IsAuthenticated)
+                @if (User.IsInRole("customer"))
                 {
+                    <li class="@(controller=="home"?"active":null)"><a href="@Url.Action("Index", "Home")">Главная</a></li>
+                    <li class="@(controller=="orders" && action=="edit"?"active":null)"><a href="@Url.Action("Edit", "Orders")">Оставить заявку</a></li>
+                    <li><a href="#">Файлы</a></li>
+                    <li><a href="#">Счет</a></li>
+                }
+            </ul>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="nav navbar-nav navbar-right">
+
                     <li><p class="navbar-text">@User.Identity.Name</p></li>
                     <li>
                         <form method="post" action="@Url.Action("LogOff", "Account")">
@@ -45,8 +38,8 @@
                         </form>
                         <a href="#" onclick="$(this).prev('form').submit();">Выход</a>
                     </li>
-                }
-            </ul>
+                </ul>
+            }
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>

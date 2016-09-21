@@ -1,0 +1,104 @@
+﻿@model VMOrder
+
+@{
+    var isNew = Model.Id == 0;
+    ViewBag.Title = isNew ? "Добавление новой заяки" : "Редактирование заявки";
+}
+
+<h3>@ViewBag.Title</h3>
+
+<form method="post" action="@Url.Action("Edit", "Orders")">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Направление, адрес</div>
+        <div class="panel-body">
+            <div class="form-group">
+                @Html.LabelFor(x => x.DestinationFrom)
+                @Html.EditorFor(x => x.DestinationFrom, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.DestinationFrom) } })
+                @Html.ValidationMessageFor(x => x.DestinationFrom)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.DestinationTo)
+                @Html.EditorFor(x => x.DestinationTo, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.DestinationTo) } })
+                @Html.ValidationMessageFor(x => x.DestinationTo)
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Дата забора</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.TakeDateBegin)
+                        @Html.EditorFor(x => x.TakeDateBegin, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.TakeDateBegin) } })
+                        @Html.ValidationMessageFor(x => x.TakeDateBegin)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.TakeDateEnd)
+                        @Html.EditorFor(x => x.TakeDateEnd, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.TakeDateEnd) } })
+                        @Html.ValidationMessageFor(x => x.TakeDateEnd)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Характеристики груза</div>
+        <div class="panel-body">
+            <div class="form-group">
+                @Html.LabelFor(x => x.CargoName)
+                @Html.EditorFor(x => x.CargoName, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoName) } })
+                @Html.ValidationMessageFor(x => x.CargoName)
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CargoLength)
+                        @Html.EditorFor(x => x.CargoLength, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoLength) } })
+                        @Html.ValidationMessageFor(x => x.CargoLength)
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CargoWidth)
+                        @Html.EditorFor(x => x.CargoWidth, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWidth) } })
+                        @Html.ValidationMessageFor(x => x.CargoWidth)
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CargoHeight)
+                        @Html.EditorFor(x => x.CargoHeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoHeight) } })
+                        @Html.ValidationMessageFor(x => x.CargoHeight)
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CargoWeight)
+                        @Html.EditorFor(x => x.CargoWeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWeight) } })
+                        @Html.ValidationMessageFor(x => x.CargoWeight)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-defult">Отправить</button>
+    </div>
+
+</form>
+
+@section scripts{
+    <script src="~/content/dist/js/jquery.validate.min.js"></script>
+    <script src="~/content/dist/js/jquery.validate.unobtrusive.min.js"></script>
+}
