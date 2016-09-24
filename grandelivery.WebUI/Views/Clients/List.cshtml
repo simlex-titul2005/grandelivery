@@ -1,0 +1,21 @@
+﻿@model VMClient[]
+@{
+    ViewBag.Title = "Клиенты";
+}
+
+<h3>Клиенты</h3>
+
+@if (Model.Any())
+{
+    <div id="grid-clients">
+        @Html.Partial("_GridView", Model)
+    </div>
+
+    @section scripts{
+        <script>
+            $(function () {
+                $("#grid-clients").sx_gv();
+            });
+        </script>
+    }
+}

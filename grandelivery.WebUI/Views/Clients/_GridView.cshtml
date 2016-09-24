@@ -1,0 +1,13 @@
+﻿@model VMClient[]
+
+@Html.SxGridView(Model, new SxExtantions.SxGridViewSettings<VMClient> {
+    Columns=new SxExtantions.SxGridViewColumn<VMClient>[] {
+        new SxExtantions.SxGridViewColumn<VMClient> { Caption="Ник-нейм", FieldName="NikName"},
+        new SxExtantions.SxGridViewColumn<VMClient> { Caption="Email", FieldName="Email"},
+        new SxExtantions.SxGridViewColumn<VMClient> { Caption="Роль", FieldName="RoleName"},
+        new SxExtantions.SxGridViewColumn<VMClient> { Caption="Телефон", FieldName="PhoneNumber"},
+        new SxExtantions.SxGridViewColumn<VMClient> { Caption="Заказов", FieldName="OrderCount"}
+    },
+    DataAjaxUrl=Url.Action("List", "Clients"),
+    ShowPagerInfo=true
+})

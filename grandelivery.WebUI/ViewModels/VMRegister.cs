@@ -6,11 +6,15 @@ namespace grandelivery.WebUI.ViewModels
     [MetadataType(typeof(VMRegisterMetadata))]
     public sealed class VMRegister : SxVMRegister
     {
+
     }
 
     public sealed class VMRegisterMetadata
     {
         [Required(ErrorMessage ="Необходимо выбрать роль")]
         public string RoleName { get; set; }
+
+        [Required(ErrorMessage = "Необходимо указать телефон")]
+        public string PhoneNumber { get; set; }
     }
 }

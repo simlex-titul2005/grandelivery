@@ -4,6 +4,7 @@ using grandelivery.WebUI.ViewModels;
 using Microsoft.AspNet.Identity;
 using SX.WebCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -11,7 +12,7 @@ using static SX.WebCore.HtmlHelpers.SxExtantions;
 
 namespace grandelivery.WebUI.Controllers
 {
-    [Authorize(Roles ="admin,customer")]
+    [Authorize(Roles = "admin,customer,carrier")]
     public sealed class OrdersController : BaseController
     {
         private static RepoOrder _repo = new RepoOrder();
@@ -21,13 +22,12 @@ namespace grandelivery.WebUI.Controllers
             set { _repo = value; }
         }
 
-        private static readonly int _pageSize = 20;
+        private static readonly int _pageSize = 40;
         [HttpGet]
         public ActionResult List(int page = 1)
         {
-            var role = GetUserRole();
             var order = new SxOrder() { FieldName = "DateCreate", Direction = SortDirection.Desc };
-            var filter = new SxFilter(page, _pageSize) { Order=order, AddintionalInfo = new object[] { role } };
+            var filter = new SxFilter(page, _pageSize) { Order=order, AddintionalInfo = new object[] { getQuesryUserId(), GetUserRole() } };
             var viewModel = Repo.Read(filter);
 
             if (page > 1 && !viewModel.Any())
@@ -41,7 +41,7 @@ namespace grandelivery.WebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> List(VMOrder filterModel, SxOrder order, int page = 1)
         {
-            var filter = new SxFilter(page, _pageSize) { Order = order != null && order.Direction != SortDirection.Unknown ? order : null, WhereExpressionObject = filterModel };
+            var filter = new SxFilter(page, _pageSize) { Order = order != null && order.Direction != SortDirection.Unknown ? order : null, WhereExpressionObject = filterModel, AddintionalInfo = new object[] { getQuesryUserId(), GetUserRole() } };
 
             var viewModel = await _repo.ReadAsync(filter);
 
@@ -53,11 +53,19 @@ namespace grandelivery.WebUI.Controllers
             return PartialView("_GridView", viewModel);
         }
 
-        [HttpGet]
-        public ActionResult Edit(int? orderId)
+        private string getQuesryUserId()
+        {
+            string userId = User.Identity.GetUserId();
+            var role = GetUserRole();
+            if (Equals(role, "admin") || Equals(role, "carrier"))
+                userId = null;
+
+            return userId;
+        }
+
+        public async Task<ActionResult> Edit(int? orderId)
         {
             var userRole = GetUserRole();
-            if (!Equals(userRole, "customer")) return new HttpNotFoundResult();
 
             var date = DateTime.Now;
             var data = orderId.HasValue ? Repo.GetByKey(orderId) : new Order() {
@@ -66,6 +74,9 @@ namespace grandelivery.WebUI.Controllers
             };
 
             if (orderId.HasValue && data == null) return new HttpNotFoundResult();
+
+            if (Equals(userRole, "admin") && orderId.HasValue && data != null && !data.Status.HasValue)
+                data.Status = await Repo.ChangeStatus(data.Id, Order.OrderStatus.Viewed);
 
             var viewModel = Mapper.Map<Order, VMOrder>(data);
             if (!orderId.HasValue)
@@ -97,6 +108,28 @@ namespace grandelivery.WebUI.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(List<int> ids)
+        {
+            await Repo.DeleteAsync(ids);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> TakeCargo (int orderId)
+        {
+            var userId = User.Identity.GetUserId();
+            var data = await Repo.TakeCargoAsync(orderId, userId);
+            return Json(data);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UntakeCargo(int orderId)
+        {
+            var data = await Repo.UntakeCargoAsync(orderId);
+            return Json(data);
         }
     }
 }

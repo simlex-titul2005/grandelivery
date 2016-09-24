@@ -1,9 +1,9 @@
-﻿@{ 
+﻿@{
     var routeDataValues = Request.RequestContext.RouteData.Values;
     var controller = routeDataValues["controller"].ToString().ToLower();
     var action = routeDataValues["action"].ToString().ToLower();
 }
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -19,12 +19,23 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li class="@(controller=="home"?"active":null)"><a href="@Url.Action("Index", "Home")">Главная</a></li>
                 @if (User.IsInRole("customer"))
                 {
-                    <li class="@(controller=="home"?"active":null)"><a href="@Url.Action("Index", "Home")">Главная</a></li>
                     <li class="@(controller=="orders" && action=="edit"?"active":null)"><a href="@Url.Action("Edit", "Orders")">Оставить заявку</a></li>
                     <li><a href="#">Файлы</a></li>
                     <li><a href="#">Счет</a></li>
+                }
+                else if (User.IsInRole("admin"))
+                {
+                    <li class="@(controller=="orders" && action=="edit"?"active":null)"><a href="@Url.Action("Edit", "Orders")">Оставить заявку</a></li>
+                    <li class="@(controller=="clients"?"active":null)"><a href="@Url.Action("List", "Clients")">Клиенты</a></li>
+                    <li><a href="#">Файлы</a></li>
+                }
+                else if (User.IsInRole("carrier"))
+                {
+                    <li><a href="#">Маршрут</a></li>
+                    <li><a href="#">Файлы</a></li>
                 }
             </ul>
             @if (User.Identity.IsAuthenticated)

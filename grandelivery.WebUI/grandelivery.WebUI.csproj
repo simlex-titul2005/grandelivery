@@ -171,16 +171,20 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\DbContext.cs" />
+    <Compile Include="Infrastructure\Repositories\RepoClient.cs" />
     <Compile Include="Infrastructure\Repositories\RepoOrder.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderTrack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\VMClient.cs" />
     <Compile Include="ViewModels\VMOrder.cs" />
     <Compile Include="ViewModels\VMRegister.cs" />
   </ItemGroup>
@@ -209,6 +213,8 @@
     <Content Include="Views\Orders\_List.cshtml" />
     <Content Include="less\sx-gv.less" />
     <Content Include="Views\Orders\Edit.cshtml" />
+    <Content Include="Views\Clients\List.cshtml" />
+    <Content Include="Views\Clients\_GridView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -226,7 +232,10 @@
       <Name>SX.WebCore</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\RepoUser\" />
+    <Folder Include="Views\Users\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

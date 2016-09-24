@@ -1,6 +1,14 @@
-﻿@if(User.IsInRole("customer"))
+﻿@if (User.IsInRole("customer"))
 {
     <h3>Ваши заказы</h3>
+}
+else if (User.IsInRole("admin"))
+{
+    <h3>Заказы</h3>
+}
+else if (User.IsInRole("carrier"))
+{
+    <h3>Заказы</h3>
 }
 
 @Html.Action("List", "Orders")

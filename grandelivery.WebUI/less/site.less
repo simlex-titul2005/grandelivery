@@ -16,12 +16,26 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: @footer-h + @footer-pad*2;
     background-image: url('/content/dist/static/bg.jpg');
+    background-attachment:fixed;
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
     font-size: 13px;
     font-family: 'PT Sans Narrow', sans-serif;
-    /*color: @color-white;*/
+    padding-bottom:@def-pad*4;
+    padding-top:@def-pad*4;
+    @media (max-width: @screen-xs-max) {
+        padding-bottom:@def-pad*8;
+    }
+
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+    }
+
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+    }
+
+    @media (min-width: @screen-lg-min) {
+    }
 }
 
 .footer {
@@ -113,4 +127,11 @@ body {
 
 .sx-gv td, .sx-gv th{
     color:@color-black;
+}
+
+//grid-orders
+#grid-orders tbody > tr > td:first-child{
+    width:50px !important;
+    font-size:15px;
+    position:relative;
 }

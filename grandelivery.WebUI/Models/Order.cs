@@ -61,7 +61,39 @@ namespace grandelivery.WebUI.Models
         /// </summary>
         public decimal CargoLength { get; set; }
 
+        public OrderStatus? Status { get; set; }
+        public enum OrderStatus : byte
+        {
+            /// <summary>
+            /// Просмотрено
+            /// </summary>
+            Viewed = 0,
 
+            /// <summary>
+            /// Принято в работу
+            /// </summary>
+            DoneAtWork = 1,
 
+            /// <summary>
+            /// В пути
+            /// </summary>
+            OnTheWay = 2,
+
+            /// <summary>
+            /// Доставлено
+            /// </summary>
+            Delivered = 3,
+
+            /// <summary>
+            /// Отменено
+            /// </summary>
+            Canceled = 4
+        }
+
+        [MaxLength(400)]
+        public string Comment { get; set; }
+
+        [MaxLength(400)]
+        public string AdminComment { get; set; }
     }
 }

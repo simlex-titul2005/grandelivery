@@ -11,10 +11,49 @@
 
 <h3>@ViewBag.Title</h3>
 
+@if ((User.IsInRole("customer") || User.IsInRole("admin")) && !isNew)
+{
+    <div class="form-group">
+        <div class="text-right">
+            <ul class="list-unstyled list-inline">
+                <li>
+                    <form method="post" action="@Url.Action("Delete", "Orders")">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ids" value="@Html.ValueFor(x=>x.Id)" />
+
+                        <button type="submit" class="btn btn-danger" onclick="if(!confirm('Удалить запись')){return false;}">Удалить</button>
+                    </form>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-default">Назад</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+
 <form method="post" action="@Url.Action("Edit", "Orders")">
 
     @Html.AntiForgeryToken()
     @Html.HiddenFor(x => x.Id)
+
+    @if (User.IsInRole("admin"))
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Статус заказа</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Status)
+                    @Html.EnumDropDownListFor(x=>x.Status, new { @class="form-control"})
+                    @Html.ValidationMessageFor(x => x.Status)
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        @Html.HiddenFor(x=>x.Status)
+    }
 
     <div class="panel panel-default">
         <div class="panel-heading">Направление, адрес</div>
@@ -96,8 +135,58 @@
         </div>
     </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">Комментарии к заказу</div>
+        <div class="panel-body">
+            <div class="form-group">
+                @if (User.IsInRole("admin"))
+                {
+                    if (!string.IsNullOrEmpty(Model.Comment))
+                    {
+                        @Html.HiddenFor(x => x.Comment)
+                        @Html.LabelFor(x => x.Comment)
+                        <div class="well">
+                            <p>
+                                @Model.Comment
+                            </p>
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    <label class="control-label" for="Comment">Ваш комментарий</label> <span>(не более 400 символов, включая пробелы)</span>
+                    @Html.EditorFor(x => x.Comment, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.Comment), @style = "min-height:200px;" } })
+                    @Html.ValidationMessageFor(x => x.Comment)
+                }
+            </div>
+            <div class="form-group">
+                @if (User.IsInRole("admin"))
+                {
+                    @Html.LabelFor(x => x.AdminComment) <span>(не более 400 символов, включая пробелы)</span>
+                    @Html.EditorFor(x => x.AdminComment, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.AdminComment), @style = "min-height:200px;" } })
+                    @Html.ValidationMessageFor(x => x.AdminComment)
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Model.AdminComment))
+                    {
+                        @Html.HiddenFor(x => x.AdminComment)
+                        @Html.LabelFor(x => x.AdminComment)
+                        <div class="well">
+                            <p>
+                                @Model.AdminComment
+                            </p>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+
     <div class="form-group">
-        <button type="submit" class="btn btn-default">Отправить</button>
+        <button type="submit" class="btn btn-default">@(isNew ? "Отправить" : "Сохранить")</button>
         <a href="@Url.Action("Index", "Home")" class="btn btn-default">Назад</a>
     </div>
 

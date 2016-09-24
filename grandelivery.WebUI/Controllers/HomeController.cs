@@ -2,6 +2,7 @@
 
 namespace grandelivery.WebUI.Controllers
 {
+    [Authorize(Roles = "admin,customer,carrier")]
     public sealed class HomeController : BaseController
     {
         [HttpGet]

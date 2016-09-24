@@ -1,16 +1,42 @@
-﻿@model VMOrder[]
+﻿@using Microsoft.AspNet.Identity;
+@using grandelivery.WebUI.Models
 
-@Html.SxGridView(Model, new SxExtantions.SxGridViewSettings<VMOrder> {
-    Columns=new SxExtantions.SxGridViewColumn<VMOrder>[] {
+@{ 
+    var userId = User.Identity.GetUserId();
+}
+
+    @model VMOrder[]
+
+    @Html.SxGridView(Model, new SxExtantions.SxGridViewSettings<VMOrder>
+{
+    Columns = new SxExtantions.SxGridViewColumn<VMOrder>[] {
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Дата заявки", FieldName="DateCreate"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Статус", FieldName="Status", Template=x=> {
+            return x.Status==Order.OrderStatus.Viewed?"Просмотрено"
+            :x.Status==Order.OrderStatus.DoneAtWork?"Принято в работу"
+            :x.Status==Order.OrderStatus.OnTheWay?"В пути"
+            :x.Status==Order.OrderStatus.Delivered?"Доставлено"
+            :x.Status==Order.OrderStatus.Canceled?"Отменено"
+            :null;
+        } },
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Пункт отправки", FieldName="DestinationFrom"},
         new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Пункт назначения", FieldName="DestinationTo"},
-        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Груз", FieldName="CargoName"}
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Груз", FieldName="CargoName"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Дата забора, с", FieldName="TakeDateBegin"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Дата забора, по", FieldName="TakeDateEnd"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Длина, м", FieldName="CargoLength"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Ширина, м", FieldName="CargoWidth"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Высота, м", FieldName="CargoHeight"},
+        new SxExtantions.SxGridViewColumn<VMOrder> { Caption="Масса, кг", FieldName="CargoWeight"}
     },
-    DataAjaxUrl=Url.Action("List", "Orders"),
-    EnableCreating=true,
+    DataAjaxUrl = Url.Action("List", "Orders"),
+    RowId = x => { return x.Id.ToString(); },
+    EnableCreating = User.IsInRole("customer"),
     CreateRowUrl = Url.Action("Edit", "Orders"),
-    EnableEditing=true,
-    EditRowUrl = x => { return Url.Action("Edit", "Orders", new { orderId=x.Id }); },
-    ShowPagerInfo=true
+    EnableEditing = true,
+    EditRowUrl = x => { return User.IsInRole("carrier") ? "#" : Url.Action("Edit", "Orders", new { orderId = x.Id }); },
+    EditBtnTitle = x => { return User.IsInRole("admin") ? "Просмотреть" : x.Status == Order.OrderStatus.OnTheWay ? "Отменить" : User.IsInRole("carrier") ? "Забрать" : "Редактировать"; },
+    EditBtnCssClass = x => { return !User.IsInRole("carrier") ? "fa fa-pencil" : x.Status != Order.OrderStatus.OnTheWay ? "fa fa-user-plus take-btn" : "fa fa-car untake-btn"; },
+    ShowPagerInfo = true,
+    RowCssClass = x => { return x.Status == Order.OrderStatus.OnTheWay ? "success" : null; }
 })

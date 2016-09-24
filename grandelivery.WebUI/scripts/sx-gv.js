@@ -14,15 +14,7 @@
                 if (!isActive) {
                     var page = $a.data('page');
 
-                    $order = $grid.find('.sx-gv__sort-arow');
-                    if ($order.length == 1) {
-                        var filelName = $order.closest('th').data('field-name');
-                        var dir = $order.data('sort-direction');
-                        var order = { FieldName: filelName, Direction: dir };
-                        getGridViewData($grid, page, order);
-                    }
-                    else
-                        getGridViewData($grid, page);
+                    clickGridViewPager($grid, page);
                 }
             });
 
@@ -141,9 +133,16 @@ function getGridViewData(grid, page, order) {
     });
 }
 
-//function replaceGridViewFind(grid)
-//{
-//    $grid = $(grid);
-//    $filterRowInputs = $grid.find('.sx-gv__filter-row input');
-//    console.log($filterRowInputs);
-//}
+function clickGridViewPager(grid, page) {
+    var $grid = $(grid);
+
+    $order = $grid.find('.sx-gv__sort-arow');
+    if ($order.length == 1) {
+        var filelName = $order.closest('th').data('field-name');
+        var dir = $order.data('sort-direction');
+        var order = { FieldName: filelName, Direction: dir };
+        getGridViewData($grid, page, order);
+    }
+    else
+        getGridViewData($grid, page);
+}

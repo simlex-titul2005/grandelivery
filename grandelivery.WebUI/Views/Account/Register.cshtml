@@ -55,6 +55,11 @@
         </div>
 
         <div class="form-group">
+            @Html.EditorFor(x => x.PhoneNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.PhoneNumber) } })
+            @Html.ValidationMessageFor(x => x.PhoneNumber)
+        </div>
+
+        <div class="form-group">
             <button class="btn btn-primary auth-page__full-btn" type="submit">Создать аккаунт</button>
         </div>
 

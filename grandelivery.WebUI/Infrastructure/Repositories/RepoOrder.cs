@@ -8,6 +8,9 @@ using System.Text;
 using SX.WebCore.Providers;
 using static SX.WebCore.HtmlHelpers.SxExtantions;
 using System.Linq;
+using static grandelivery.WebUI.Models.Order;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace grandelivery.WebUI.Infrastructure.Repositories
 {
@@ -17,17 +20,20 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
-                var data = connection.Query<Order>("dbo.add_order @df, @dt, @tdb, @tde, @uid, @cName, @cWeight, @cWidth, @cHeight, @cLength", new {
-                    df=model.DestinationFrom,
-                    dt=model.DestinationTo,
-                    tdb=model.TakeDateBegin,
-                    tde=model.TakeDateEnd,
-                    uid=model.UserId,
-                    cName=model.CargoName,
-                    cWeight=model.CargoWeight,
-                    cWidth=model.CargoWidth,
-                    cHeight=model.CargoHeight,
-                    cLength=model.CargoLength
+                var data = connection.Query<Order>("dbo.add_order @df, @dt, @tdb, @tde, @uid, @cName, @cWeight, @cWidth, @cHeight, @cLength, @comment, @adminComment", new
+                {
+                    df = model.DestinationFrom,
+                    dt = model.DestinationTo,
+                    tdb = model.TakeDateBegin,
+                    tde = model.TakeDateEnd,
+                    uid = model.UserId,
+                    cName = model.CargoName,
+                    cWeight = model.CargoWeight,
+                    cWidth = model.CargoWidth,
+                    cHeight = model.CargoHeight,
+                    cLength = model.CargoLength,
+                    comment=model.Comment,
+                    adminComment=model.AdminComment
                 });
 
                 return data.SingleOrDefault();
@@ -37,21 +43,31 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
         public sealed override VMOrder[] Read(SxFilter filter)
         {
             var sb = new StringBuilder();
-            sb.Append(SxQueryProvider.GetSelectString());
+            sb.Append(SxQueryProvider.GetSelectString(new string[] {
+                "do.*"
+            }));
             sb.Append(" FROM D_ORDER AS do ");
+            sb.Append(" JOIN AspNetUsers AS anu ON anu.Id = do.UserId ");
+            sb.Append(" JOIN AspNetUserRoles AS anur ON anur.UserId = anu.Id ");
+            sb.Append(" JOIN AspNetRoles AS anr ON anr.Id = anur.RoleId AND anr.Name IN ('customer', 'carrier', 'admin') ");
 
             object param = null;
             var gws = getOrdersWhereString(filter, out param);
             sb.Append(gws);
 
             var defaultOrder = new SxOrder { FieldName = "DateCreate", Direction = SortDirection.Desc };
-            sb.Append(SxQueryProvider.GetOrderString(defaultOrder, filter.Order));
+            sb.Append(SxQueryProvider.GetOrderString(defaultOrder, filter.Order, new Dictionary<string, string> {
+                ["DateCreate"]="do.DateCreate"
+            }));
 
             sb.AppendFormat(" OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", filter.PagerInfo.SkipCount, filter.PagerInfo.PageSize);
 
             //count
             var sbCount = new StringBuilder();
             sbCount.Append("SELECT COUNT(1) FROM D_ORDER AS do ");
+            sbCount.Append("JOIN AspNetUsers AS anu ON anu.Id = do.UserId ");
+            sbCount.Append("JOIN AspNetUserRoles AS anur ON anur.UserId = anu.Id ");
+            sbCount.Append("JOIN AspNetRoles AS anr ON anr.Id = anur.RoleId AND anr.Name IN ('customer', 'carrier', 'admin') ");
             sbCount.Append(gws);
 
             using (var conn = new SqlConnection(ConnectionString))
@@ -65,14 +81,19 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
         {
             param = null;
             var query = new StringBuilder();
-            //query.Append(" WHERE (dal.[Description] LIKE '%'+@desc+'%' OR @desc IS NULL) ");
 
-            //string desc = filter.WhereExpressionObject?.Description;
+            var userId = filter.AddintionalInfo != null && filter.AddintionalInfo[0] != null ? (string)filter.AddintionalInfo[0] : null;
+            var roleName = filter.AddintionalInfo != null && filter.AddintionalInfo[1] != null ? (string)filter.AddintionalInfo[1] : null;
 
-            //param = new
-            //{
-            //    desc = desc
-            //};
+            query.Append(" WHERE (do.UserId=@userId OR @userId IS NULL) ");
+            if(roleName!=null && Equals(roleName, "carrier"))
+                query.Append(" AND (do.Status IN (1, 2) ) ");
+
+
+            param = new
+            {
+                userId = userId
+            };
 
             return query.ToString();
         }
@@ -81,9 +102,9 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
-                var data = connection.Query<Order>("dbo.update_order @id, @df, @dt, @tdb, @tde, @cName, @cWeight, @cWidth, @cHeight, @cLength", new
+                var data = connection.Query<Order>("dbo.update_order @id, @df, @dt, @tdb, @tde, @cName, @cWeight, @cWidth, @cHeight, @cLength, @comment, @adminComment, @status", new
                 {
-                    id=model.Id,
+                    id = model.Id,
                     df = model.DestinationFrom,
                     dt = model.DestinationTo,
                     tdb = model.TakeDateBegin,
@@ -92,11 +113,69 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
                     cWeight = model.CargoWeight,
                     cWidth = model.CargoWidth,
                     cHeight = model.CargoHeight,
-                    cLength = model.CargoLength
+                    cLength = model.CargoLength,
+                    comment = model.Comment,
+                    adminComment = model.AdminComment,
+                    status=model.Status
                 });
 
                 return data.SingleOrDefault();
             }
+        }
+
+        public async Task<OrderStatus> ChangeStatus(int orderId, OrderStatus status)
+        {
+            return await Task.Run(() =>
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    var data = connection.Execute("dbo.change_order_status @orderId, @status", new { orderId = orderId, status = status });
+                    return status;
+                }
+            });
+        }
+
+        public async Task<int> DeleteAsync(List<int> ids)
+        {
+            return await Task.Run(() =>
+            {
+
+                if (ids == null || !ids.Any()) return 0;
+
+                var sb = new StringBuilder();
+                ids.ForEach(x => { sb.AppendFormat(", {0}", x); });
+                sb.Remove(0, 2);
+
+                var query = "DELETE FROM D_ORDER WHERE Id IN (" + sb.ToString() + ")";
+
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    var data = connection.Query<int>(query);
+                    return data.SingleOrDefault();
+                }
+            });
+        }
+
+        public async Task<int> TakeCargoAsync(int orderId, string userId)
+        {
+            return await Task.Run(()=> {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    var data = connection.Query<int>("dbo.take_cargo @orderId, @userId", new { orderId=orderId, userId=userId});
+                    return orderId;
+                }
+            });
+        }
+
+        public async Task<int> UntakeCargoAsync(int orderId)
+        {
+            return await Task.Run(() => {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    var data = connection.Query<int>("dbo.untake_cargo @orderId", new { orderId = orderId });
+                    return orderId;
+                }
+            });
         }
     }
 }
