@@ -174,7 +174,7 @@ BEGIN
 	        OrderId,
 	        UserId,
 	        DateCreate,
-	        DateUpdtae,
+	        DateUpdate,
 	        IsActive
 	      )
 	    VALUES
