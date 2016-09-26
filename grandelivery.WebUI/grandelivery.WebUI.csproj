@@ -215,6 +215,7 @@
     <Content Include="Views\Orders\Edit.cshtml" />
     <Content Include="Views\Clients\List.cshtml" />
     <Content Include="Views\Clients\_GridView.cshtml" />
+    <None Include="Properties\PublishProfiles\RELEASE.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -31,7 +31,7 @@
     },
     DataAjaxUrl = Url.Action("List", "Orders"),
     RowId = x => { return x.Id.ToString(); },
-    EnableCreating = User.IsInRole("customer"),
+    EnableCreating = false,
     CreateRowUrl = Url.Action("Edit", "Orders"),
     EnableEditing = true,
     EditRowUrl = x => { return User.IsInRole("carrier") ? "#" : Url.Action("Edit", "Orders", new { orderId = x.Id }); },
