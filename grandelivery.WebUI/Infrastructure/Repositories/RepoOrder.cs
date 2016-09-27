@@ -44,7 +44,8 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
         {
             var sb = new StringBuilder();
             sb.Append(SxQueryProvider.GetSelectString(new string[] {
-                "do.*"
+                "do.*",
+                "(ROUND(do.CargoLength * do.CargoWidth * do.CargoHeight, 2)) AS Volume"
             }));
             sb.Append(" FROM D_ORDER AS do ");
             sb.Append(" JOIN AspNetUsers AS anu ON anu.Id = do.UserId ");

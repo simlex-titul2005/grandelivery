@@ -1,12 +1,24 @@
-﻿@model VMOrder
+﻿@using SX.WebCore.Extantions
+@model VMOrder
 
 @{
     var isNew = Model.Id == 0;
     ViewBag.Title = isNew ? "Добавление новой заяки" : "Редактирование заявки";
+
+    var statusValues = Enum.GetValues(typeof(grandelivery.WebUI.Models.Order.OrderStatus));
+    var statuses = new List<SelectListItem>();
+    foreach (Enum item in statusValues)
+    {
+        statuses.Add(new SelectListItem {
+            Text=item.GetDescription(),
+            Value=item.ToString(),
+            Selected=Equals(item, Model.Status)
+        });
+    }
 }
 
 @section styles{
-    <link href="~/content/dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="@Url.Action("Css", "StaticContent", new { name="bootstrap-datetimepicker"})" rel="stylesheet" />
 }
 
 <h3>@ViewBag.Title</h3>
@@ -44,7 +56,7 @@
             <div class="panel-body">
                 <div class="form-group">
                     @Html.LabelFor(x => x.Status)
-                    @Html.EnumDropDownListFor(x=>x.Status, new { @class="form-control"})
+                    @Html.DropDownListFor(x=>x.Status, statuses, "Заполните статус заявки", new { @class="form-control"})
                     @Html.ValidationMessageFor(x => x.Status)
                 </div>
             </div>
@@ -52,7 +64,7 @@
     }
     else
     {
-        @Html.HiddenFor(x=>x.Status)
+        @Html.HiddenFor(x => x.Status)
     }
 
     <div class="panel panel-default">
@@ -106,28 +118,28 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         @Html.LabelFor(x => x.CargoLength)
-                        @Html.EditorFor(x => x.CargoLength, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoLength) } })
+                        @Html.EditorFor(x => x.CargoLength, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoLength), @data_val_number="Значение должно быть числом" } })
                         @Html.ValidationMessageFor(x => x.CargoLength)
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         @Html.LabelFor(x => x.CargoWidth)
-                        @Html.EditorFor(x => x.CargoWidth, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWidth) } })
+                        @Html.EditorFor(x => x.CargoWidth, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWidth), @data_val_number = "Значение должно быть числом" } })
                         @Html.ValidationMessageFor(x => x.CargoWidth)
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         @Html.LabelFor(x => x.CargoHeight)
-                        @Html.EditorFor(x => x.CargoHeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoHeight) } })
+                        @Html.EditorFor(x => x.CargoHeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoHeight), @data_val_number = "Значение должно быть числом" } })
                         @Html.ValidationMessageFor(x => x.CargoHeight)
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         @Html.LabelFor(x => x.CargoWeight)
-                        @Html.EditorFor(x => x.CargoWeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWeight) } })
+                        @Html.EditorFor(x => x.CargoWeight, new { htmlAttributes = new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CargoWeight), @data_val_number = "Значение должно быть числом" } })
                         @Html.ValidationMessageFor(x => x.CargoWeight)
                     </div>
                 </div>
@@ -193,10 +205,8 @@
 </form>
 
 @section scripts{
-    <script src="~/content/dist/js/jquery.validate.min.js"></script>
-    <script src="~/content/dist/js/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/content/dist/js/moment-with-locales.min.js"></script>
-    <script src="~/content/dist/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="moment-with-locales"})"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="bootstrap-datetimepicker"})"></script>
 
     <script>
         $.validator.methods.range = function (value, element, param) {

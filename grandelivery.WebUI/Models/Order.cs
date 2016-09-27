@@ -1,6 +1,7 @@
 ﻿using SX.WebCore;
 using SX.WebCore.Abstract;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -67,26 +68,31 @@ namespace grandelivery.WebUI.Models
             /// <summary>
             /// Просмотрено
             /// </summary>
+            [Description("Просмотрено")]
             Viewed = 0,
 
             /// <summary>
             /// Принято в работу
             /// </summary>
+            [Description("Принято в работу")]
             DoneAtWork = 1,
 
             /// <summary>
             /// В пути
             /// </summary>
+            [Description("В пути")]
             OnTheWay = 2,
 
             /// <summary>
             /// Доставлено
             /// </summary>
+            [Description("Доставлено")]
             Delivered = 3,
 
             /// <summary>
             /// Отменено
             /// </summary>
+            [Description("Отменено")]
             Canceled = 4
         }
 

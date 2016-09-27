@@ -66,6 +66,8 @@ namespace grandelivery.WebUI.ViewModels
         [Display(Name = "Комментарий администратора"), DataType(DataType.MultilineText)]
         public string AdminComment { get; set; }
 
+        public decimal Volume { get; set; }
+
         public string UserId { get; set; }
     }
 }

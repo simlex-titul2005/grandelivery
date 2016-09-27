@@ -7,6 +7,9 @@
     @RenderSection("head", false)
     <title>@(ViewBag.Title==null ? MvcApplication.AppName: ViewBag.Title+" | "+MvcApplication.AppName)</title>
 
+    <link href="@Url.Action("Css", "StaticContent", new { name="bootstrap"})" rel="stylesheet" />
+    <link href="@Url.Action("Css", "StaticContent", new { name="font-awesome"})" rel="stylesheet" />
+    <link href="@Url.Action("Css", "StaticContent", new { name="sx-core"})" rel="stylesheet" />
     <link href="~/content/dist/css/site.min.css" rel="stylesheet" />
     @RenderSection("styles", false)
 </head>
@@ -21,6 +24,11 @@
     </div>
     @Html.Partial("_Footer")
 
+    <script src="@Url.Action("Js", "StaticContent", new { name="jquery"})"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="bootstrap"})"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="jquery.validate"})"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="jquery.validate.unobtrusive"})"></script>
+    <script src="@Url.Action("Js", "StaticContent", new { name="sx-core"})"></script>
     <script src="~/content/dist/js/site.min.js"></script>
     <script>
         $('[data-toggle="tooltip"]').tooltip();

@@ -146,20 +146,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="content\dist\css\bootstrap-datetimepicker.min.css" />
     <Content Include="content\dist\css\site.min.css" />
-    <Content Include="content\dist\fonts\fontawesome-webfont.svg" />
-    <Content Include="content\dist\js\bootstrap-datetimepicker.min.js" />
-    <Content Include="content\dist\js\jquery.unobtrusive-ajax.min.js" />
-    <Content Include="content\dist\js\jquery.validate.min.js" />
-    <Content Include="content\dist\js\jquery.validate.unobtrusive.min.js" />
-    <Content Include="content\dist\js\moment-with-locales.min.js" />
     <Content Include="content\dist\js\site.min.js" />
     <Content Include="content\dist\static\bg.jpg" />
     <Content Include="Global.asax" />
     <Content Include="gulpfile.js" />
     <Content Include="scripts\site.js" />
-    <Content Include="scripts\sx-gv.js" />
     <Content Include="sql\custom.sql" />
     <Content Include="sql\roles.sql" />
     <Content Include="Web.config" />
@@ -174,6 +166,7 @@
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -195,13 +188,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="package.json" />
-    <Content Include="bower.json" />
     <Content Include="less\site.less" />
-    <Content Include="content\dist\fonts\fontawesome-webfont.eot" />
-    <Content Include="content\dist\fonts\fontawesome-webfont.ttf" />
-    <Content Include="content\dist\fonts\fontawesome-webfont.woff" />
-    <Content Include="content\dist\fonts\fontawesome-webfont.woff2" />
-    <Content Include="content\dist\fonts\FontAwesome.otf" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="less\colors.less" />
     <Content Include="Views\Shared\_Footer.cshtml" />
@@ -211,10 +198,11 @@
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Orders\_GridView.cshtml" />
     <Content Include="Views\Orders\_List.cshtml" />
-    <Content Include="less\sx-gv.less" />
     <Content Include="Views\Orders\Edit.cshtml" />
     <Content Include="Views\Clients\List.cshtml" />
     <Content Include="Views\Clients\_GridView.cshtml" />
+    <Content Include="bower.json" />
+    <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Properties\PublishProfiles\RELEASE.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -224,18 +212,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SX.WebCore\SX.WebCore.Static\SX.WebCore.Static.csproj">
-      <Project>{743adb7f-3413-4789-8d46-b7c902da7a35}</Project>
-      <Name>SX.WebCore.Static</Name>
-    </ProjectReference>
+    <Folder Include="Views\RepoUser\" />
+    <Folder Include="Views\StaticContent\" />
+    <Folder Include="Views\Users\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\SX.WebCore\SX.WebCore\SX.WebCore.csproj">
       <Project>{daf1a092-ded8-4c43-b08d-20e55c6f03a2}</Project>
       <Name>SX.WebCore</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\RepoUser\" />
-    <Folder Include="Views\Users\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
