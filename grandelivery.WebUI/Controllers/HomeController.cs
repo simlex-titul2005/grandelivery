@@ -8,6 +8,9 @@ namespace grandelivery.WebUI.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            var statuses = OrdersController.Repo.GetOrdersStatusFilters();
+            ViewBag.StatusesFilter = statuses;
+
             return View();
         }
     }

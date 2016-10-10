@@ -19,7 +19,6 @@ namespace grandelivery.WebUI.Controllers
         public static RepoOrder Repo
         {
             get { return _repo; }
-            set { _repo = value; }
         }
 
         private static readonly int _pageSize = 40;
@@ -27,7 +26,7 @@ namespace grandelivery.WebUI.Controllers
         public ActionResult List(int page = 1)
         {
             var order = new SxOrder() { FieldName = "DateCreate", Direction = SortDirection.Desc };
-            var filter = new SxFilter(page, _pageSize) { Order=order, AddintionalInfo = new object[] { getQuesryUserId(), GetUserRole() } };
+            var filter = new SxFilter(page, _pageSize) { Order = order, AddintionalInfo = new object[] { getQueryUserId(), GetUserRole(), null } };
             var viewModel = Repo.Read(filter);
 
             if (page > 1 && !viewModel.Any())
@@ -41,9 +40,11 @@ namespace grandelivery.WebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> List(VMOrder filterModel, SxOrder order, int page = 1)
         {
-            var filter = new SxFilter(page, _pageSize) { Order = order != null && order.Direction != SortDirection.Unknown ? order : null, WhereExpressionObject = filterModel, AddintionalInfo = new object[] { getQuesryUserId(), GetUserRole() } };
+            var status = Request.Form.Get("status");
 
-            var viewModel = await _repo.ReadAsync(filter);
+            var filter = new SxFilter(page, _pageSize) { Order = order != null && order.Direction != SortDirection.Unknown ? order : null, WhereExpressionObject = filterModel, AddintionalInfo = new object[] { getQueryUserId(), GetUserRole(), status != null ? Convert.ToInt32(status) : (int?)null } };
+
+            var viewModel = await Repo.ReadAsync(filter);
 
             if (page > 1 && !viewModel.Any())
                 return new HttpNotFoundResult();
@@ -53,7 +54,7 @@ namespace grandelivery.WebUI.Controllers
             return PartialView("_GridView", viewModel);
         }
 
-        private string getQuesryUserId()
+        private string getQueryUserId()
         {
             string userId = User.Identity.GetUserId();
             var role = GetUserRole();
@@ -68,9 +69,10 @@ namespace grandelivery.WebUI.Controllers
             var userRole = GetUserRole();
 
             var date = DateTime.Now;
-            var data = orderId.HasValue ? Repo.GetByKey(orderId) : new Order() {
+            var data = orderId.HasValue ? Repo.GetByKey(orderId) : new Order()
+            {
                 TakeDateBegin = date.AddHours(1),
-                TakeDateEnd=date.AddDays(1),
+                TakeDateEnd = date.AddDays(1),
             };
 
             if (orderId.HasValue && data == null) return new HttpNotFoundResult();
@@ -93,7 +95,7 @@ namespace grandelivery.WebUI.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Edit(VMOrder model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var isNew = model.Id == 0;
                 var redactModel = Mapper.Map<VMOrder, Order>(model);
@@ -118,7 +120,7 @@ namespace grandelivery.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> TakeCargo (int orderId)
+        public async Task<JsonResult> TakeCargo(int orderId)
         {
             var userId = User.Identity.GetUserId();
             var data = await Repo.TakeCargoAsync(orderId, userId);

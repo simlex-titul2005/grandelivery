@@ -12,6 +12,8 @@ namespace grandelivery.WebUI.Infrastructure
 
         public DbSet<OrderTrack> OrderTracks { get; set; }
 
+        public new DbSet<SiteService> SiteServices { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,4 +1,9 @@
-﻿@if (User.IsInRole("customer"))
+﻿@{
+    var statusesFilter = (VMOrderStatusFilter[])ViewBag.StatusesFilter;
+    VMOrderStatusFilter statusFilter = null;
+}
+
+@if (User.IsInRole("customer"))
 {
     <h3>Ваши заказы</h3>
 }
@@ -11,12 +16,43 @@ else if (User.IsInRole("carrier"))
     <h3>Заказы</h3>
 }
 
+@if (User.IsInRole("admin") && statusesFilter.Any())
+{
+    <div class="form-group">
+        @for (int i = 0; i < statusesFilter.Length; i++)
+        {
+            statusFilter = statusesFilter[i];
+            <button type="button" class="btn btn-default status-filter-btn" style="margin-bottom:15px;" data-status="@statusFilter.OrderStatus">@statusFilter.OrderStatusName <span class="badge">@statusFilter.Count</span></button>
+        }
+    </div>
+}
+
 @Html.Action("List", "Orders")
 
 @section scripts{
     <script>
         $(function () {
             $('#grid-orders').sx_gv();
+
+            $('.status-filter-btn').click(function () {
+                $btn = $(this);
+
+                $.ajax({
+                    method: 'post',
+                    url: '@Url.Action("List", "Orders")',
+                    data: { status: $btn.attr('data-status') },
+                    beforeSend: function () {
+                        if ($btn.find('.fa-spinner').length == 0)
+                            $btn.prepend('<i class="fa fa-spinner fa-spin" style="margin-right:5px;"></i>');
+                    },
+                    success: function (result) {
+                        $btn.find('.fa-spinner').remove();
+                        $('#grid-orders').html(result);
+                        $('.status-filter-btn').not($btn).removeClass('btn-primary').addClass('btn-default');
+                        $btn.removeClass('btn-default').addClass('btn-primary');
+                    }
+                });
+            });
         });
     </script>
 }

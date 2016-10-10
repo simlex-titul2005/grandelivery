@@ -85,15 +85,18 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
 
             var userId = filter.AddintionalInfo != null && filter.AddintionalInfo[0] != null ? (string)filter.AddintionalInfo[0] : null;
             var roleName = filter.AddintionalInfo != null && filter.AddintionalInfo[1] != null ? (string)filter.AddintionalInfo[1] : null;
+            var status = filter.AddintionalInfo != null && filter.AddintionalInfo[2] != null ? (int)filter.AddintionalInfo[2] : (int?)null;
 
             query.Append(" WHERE (do.UserId=@userId OR @userId IS NULL) ");
             if(roleName!=null && Equals(roleName, "carrier"))
                 query.Append(" AND (do.Status IN (1, 2) ) ");
-
+            if(status!=null)
+                query.Append(" AND ((@status <> -1 AND do.[Status]=@status) OR (@status=-1 AND do.[Status] IS NULL)) ");
 
             param = new
             {
-                userId = userId
+                userId = userId,
+                status= status
             };
 
             return query.ToString();
@@ -177,6 +180,37 @@ namespace grandelivery.WebUI.Infrastructure.Repositories
                     return orderId;
                 }
             });
+        }
+
+        public VMOrderStatusFilter[] GetOrdersStatusFilters()
+        {
+            var query = new StringBuilder();
+            query.Append("SELECT do.[Status], COUNT(1) AS[Count] ");
+            query.Append("FROM D_ORDER AS do ");
+            query.Append("JOIN AspNetUsers AS anu ON anu.Id = do.UserId ");
+            query.Append("JOIN AspNetUserRoles AS anur ON anur.UserId = anu.Id ");
+            query.Append("JOIN AspNetRoles AS anr ON anr.Id = anur.RoleId AND anr.Name IN ('customer', 'carrier', 'admin') ");
+            query.Append("GROUP BY do.[Status] ");
+            query.Append("ORDER BY do.[Status] ");
+
+            var data = new dynamic[0];
+            var viewData = new VMOrderStatusFilter[0];
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                data = connection.Query<dynamic>(query.ToString()).ToArray();
+            }
+
+            if (!data.Any()) return viewData;
+
+            viewData = new VMOrderStatusFilter[data.Length];
+            dynamic item = null;
+            for (int i = 0; i < data.Length; i++)
+            {
+                item = data[i];
+                viewData[i] = new VMOrderStatusFilter { Count = item.Count, OrderStatus = item.Status==null ? -1 : item.Status };
+            }
+
+            return viewData;
         }
     }
 }
